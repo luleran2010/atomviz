@@ -12,6 +12,8 @@ find_package(Magnum REQUIRED
     Shaders
     Sdl2Application)
 
+find_package(MagnumIntegration REQUIRED Eigen ImGui)
+
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
 add_executable(main WIN32 main.cpp ArcBall.cpp)
