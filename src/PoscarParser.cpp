@@ -25,6 +25,7 @@ std::optional<Atoms> PoscarParser::parse()
     input >> cell(0, 0) >> cell(0, 1) >> cell(0, 2);
     input >> cell(1, 0) >> cell(1, 1) >> cell(1, 2);
     input >> cell(2, 0) >> cell(2, 1) >> cell(2, 2);
+    input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     // Read fourth line as the elements
     std::string line;
     std::getline(input, line);
@@ -50,6 +51,8 @@ std::optional<Atoms> PoscarParser::parse()
     for (int i = 0; i < numAtoms; i++) {
         input >> positions(i, 0) >> positions(i, 1) >> positions(i, 2);
     }
-    return std::make_optional<Atoms>(cell, positions, Eigen::ArrayXi(numbers.begin(), numbers.end()));
 
+    input.close();
+
+    return std::make_optional<Atoms>(cell, positions, Eigen::ArrayXi::Ones(numAtoms));
 }

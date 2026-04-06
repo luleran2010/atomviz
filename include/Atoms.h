@@ -2,7 +2,7 @@
 #define AtomViz_Atom_h
 
 #include <vector>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 
 class AtomInterface {
 public:
