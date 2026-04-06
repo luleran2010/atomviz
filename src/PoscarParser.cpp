@@ -16,6 +16,8 @@ std::optional<Atoms> PoscarParser::parse()
     Cell cell;
     std::vector<std::string> elements;
     std::vector<int> numbers;
+    bool selective_dynamics = false;
+    bool cartesian_coordinates = true;
 
     // Read first line as the name of the system
     std::getline(input, systemName);
@@ -46,6 +48,14 @@ std::optional<Atoms> PoscarParser::parse()
     for (int i = 0; i < numbers.size(); i++) {
         numAtoms += numbers[i];
     }
+    // Read the type of coordinates
+    input >> line;
+    if (line[0] == 'S') {
+        selective_dynamics = true;
+        input >> line;
+    }
+    if (line[0] == 'C') cartesian_coordinates = true;
+    else cartesian_coordinates = false;
     // Read the rest as the positions
     Eigen::MatrixX3f positions(numAtoms, 3);
     for (int i = 0; i < numAtoms; i++) {
@@ -53,6 +63,8 @@ std::optional<Atoms> PoscarParser::parse()
     }
 
     input.close();
+
+    if (!cartesian_coordinates) positions = positions * cell;
 
     return std::make_optional<Atoms>(cell, positions, Eigen::ArrayXi::Ones(numAtoms));
 }

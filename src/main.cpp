@@ -1,5 +1,4 @@
 #include <Corrade/Containers/Optional.h>
-#include <Magnum/DebugTools/ColorMap.h>
 #include <Magnum/ImageView.h>
 #include <Magnum/PixelFormat.h>
 #include <Magnum/GL/Buffer.h>
@@ -20,11 +19,14 @@
 #include <Magnum/SceneGraph/MatrixTransformation3D.h>
 #include <Magnum/SceneGraph/Object.h>
 #include <Magnum/SceneGraph/Scene.h>
-#include <Magnum/Shaders/MeshVisualizerGL.h>
+#include <Magnum/Shaders/PhongGL.h>
 #include <Magnum/Trade/MeshData.h>
 
 #include "ArcBall.h"
 #include "ArcBallCamera.h"
+#include "Atoms.h"
+#include "PoscarParser.h"
+#include "AtomsDrawables.h"
 
 using namespace Magnum;
 
@@ -52,26 +54,10 @@ private:
     SceneGraph::DrawableGroup3D _drawables;
     GL::Mesh _mesh{NoCreate};
 
-    Shaders::MeshVisualizerGL3D _shader{NoCreate};
+    Shaders::PhongGL _shader{NoCreate};
     GL::Texture2D _colormap{NoCreate};
-};
 
-class VisualizationDrawables: public SceneGraph::Drawable3D {
-public:
-    explicit VisualizationDrawables(Object3D& object,
-        Shaders::MeshVisualizerGL3D& shader, GL::Mesh& mesh,
-        SceneGraph::DrawableGroup3D& drawables):
-        SceneGraph::Drawable3D{object, &drawables}, _shader(shader), _mesh(mesh) {}
-
-    void draw(const Matrix4& transformation, SceneGraph::Camera3D& camera) {
-        _shader.setTransformationMatrix(transformation)
-            .setProjectionMatrix(camera.projectionMatrix())
-            .draw(_mesh);
-    }
-
-private:
-        Shaders::MeshVisualizerGL3D& _shader;
-        GL::Mesh& _mesh;
+    Atoms _atoms;
 };
 
 AtomViz::AtomViz(const Arguments& arguments):
@@ -92,38 +78,29 @@ AtomViz::AtomViz(const Arguments& arguments):
     GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
     GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 
+    Debug{} << "The window has been setup";
+
     // Setup a objects
     {
-        const Trade::MeshData cube = Primitives::cubeSolid();
-        _mesh = MeshTools::compile(cube);
+        _shader = Shaders::PhongGL{Shaders::PhongGL::Configuration{}
+            .setLightCount(2)};
 
-        const auto map = DebugTools::ColorMap::turbo();
-        const Vector2i size{Int(map.size()), 1};
-        _colormap = GL::Texture2D{};
-        _colormap
-            .setMinificationFilter(SamplerFilter::Linear)
-            .setMagnificationFilter(SamplerFilter::Linear)
-            .setWrapping(SamplerWrapping::ClampToEdge)
-            .setStorage(1, GL::TextureFormat::RGB8, size)
-            .setSubImage(0, {}, ImageView2D{PixelFormat::RGB8Unorm, size, map});
+        Debug{} << "The shader has been setup";
         
-        _shader = Shaders::MeshVisualizer3D{Shaders::MeshVisualizerGL3D::Configuration{}
-            .setFlags(Shaders::MeshVisualizerGL3D::Flag::Wireframe|
-                Shaders::MeshVisualizerGL3D::Flag::VertexId)};
-        _shader
-            .setViewportSize(Vector2{framebufferSize()})
-            .setColor(0xffffff_rgbf)
-            .setWireframeColor(0xffffff_rgbf)
-            .setWireframeWidth(2.0f)
-            .setColorMapTransformation(0.0f, 1.0f/cube.vertexCount())
-            .bindColorMapTexture(_colormap);
-
         auto object = new Object3D{&_scene};
-        (*object)
-            .rotateY(40.0_degf)
-            .rotateX(-30.0_degf);
-        
-        new VisualizationDrawables{*object, _shader, _mesh, _drawables};
+        // (*object)
+        //     .rotateY(40.0_degf)
+        //     .rotateX(-30.0_degf);
+        PoscarParser parser(RESOURCE_DIR + std::string("Zn.vasp"));
+        if (auto atoms = parser.parse()) {
+            Debug{} << "The structure file has been successfully parsed";
+            _atoms = *atoms;
+            new AtomsDrawables{*object, _shader, _drawables, _atoms};
+        } else {
+            Debug{} << "The structure file could not be parsed";
+            // Exit the application
+            exit();
+        }
     }
 
     // Set up the camera
@@ -132,6 +109,8 @@ AtomViz::AtomViz(const Arguments& arguments):
         const Vector3 center{};
         const Vector3 up = Vector3::yAxis();
         _arcballCamera.emplace(_scene, eye, center, up, 45.0_degf, windowSize(), framebufferSize());
+
+        Debug{} << "The camera has been setup";
     }
 
     // Loop at 60 Hz max
@@ -143,6 +122,16 @@ void AtomViz::drawEvent() {
     GL::defaultFramebuffer.clear(
         GL::FramebufferClear::Color|GL::FramebufferClear::Depth);
 
+    _shader
+        .setProjectionMatrix(_arcballCamera->camera().projectionMatrix())
+        .setLightPositions({
+            {10.0f, 10.0f, 10.0f, 0.0f},
+            {-5.0f, -5.0f, 10.0f, 0.0f}
+        })
+        .setLightColors({Color3{1.0f}, Color3{0.3f}});
+
+    Debug{} << "The shader has been set up in the draw event";
+
     // Call arcball update in every frame. This will do nothing if the camera has not been changed.
     // Otherwise, camera transformation will be propagated into the camera objects.
     bool camChanged = _arcballCamera->update();
@@ -150,13 +139,17 @@ void AtomViz::drawEvent() {
     swapBuffers();
 
     if (camChanged) redraw();
+
+    Debug{} << "The camera has been updated in the draw event";
 }
 
 void AtomViz::viewportEvent(ViewportEvent& event) {
     GL::defaultFramebuffer.setViewport({{}, event.framebufferSize()});
 
     _arcballCamera->reshape(event.windowSize(), event.framebufferSize());
-    _shader.setViewportSize(Vector2{framebufferSize()});
+    // _shader.setViewportSize(Vector2{framebufferSize()});
+
+    Debug{} << "The viewport has been updated in the viewport event";
 }
 
 void AtomViz::keyPressEvent(KeyEvent& event) {
