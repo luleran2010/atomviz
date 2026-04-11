@@ -2,11 +2,14 @@
   "dependencies": [
     "catch2",
     "corrade",
-    "eigen",
-    "imgui",
-    "magnum",
+    "eigen3",
+    "imgui",{
+      "name": "magnum",
+      "version>=": "2026.04"
+    },
     {
       "name": "magnum-integration",
+      "version>=": "2026.04",
       "features": [
         "eigen",
         "imgui"

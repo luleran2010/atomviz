@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_LIST_DIR}/custom-ports")
+
 project(AtomViz CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_SOURCE_DIR}/custom-ports")
-
-find_package(Eigen3 CONFIG REQUIRED)
+find_package(Eigen3 CONFIG REQUIRED NO_MODULE)
 find_package(Corrade REQUIRED Main)
 find_package(Magnum REQUIRED
     DebugTools

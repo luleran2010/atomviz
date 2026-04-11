@@ -2,15 +2,15 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO mosra/magnum
     REF 35831dcc01afc5928382fcb8a9f3b58dea50df08
-    SHA512 65b0c8a4520d1d282420c30ecd7c8525525d4dbb6e562e1e2e93d110f4eb686af43f098bf02460727fab1e1f9446dd00a99051e150c05ea40b1486a44fea1042
+    SHA512 51b8ba039f4fab9b979d5a228c33278eaa7eb63a264388d1161d9136cfdf388b7210214c4eb955d57848b7f869b7c92b743352d49405896af7687af1144e71c3
     HEAD_REF master
     PATCHES
         002-sdl-includes.patch
         003-fix-FindGLFW.patch
-        004-fix-FindOpenAL.patch
-        005-fix-find-sdl2.patch
-        006-fix-build.patch # From https://github.com/mosra/magnum/issues/642#issuecomment-2217261862
-        007-missing-headers.diff
+        # 004-fix-FindOpenAL.patch
+        # 005-fix-find-sdl2.patch
+        # 006-fix-build.patch # From https://github.com/mosra/magnum/issues/642#issuecomment-2217261862
+        # 007-missing-headers.diff
 )
 
 string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "static" BUILD_STATIC)

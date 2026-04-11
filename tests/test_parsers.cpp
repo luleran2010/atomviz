@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 #include <filesystem>
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 #include "Atoms.h"
 #include "PoscarParser.h"

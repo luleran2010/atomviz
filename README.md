@@ -14,3 +14,11 @@ For tests:
 ```
 vcpkg install catch2
 ```
+
+# Problem with Eigen
+
+When in build folder under `vcpkg_installed/x64-windows/include`, create a symbolic like of Eigen by (need administrative priviledge)
+```
+mklink /J Eigen eigen3/Eigen
+```
+so that Eigen can be found by other libraries.
