@@ -1,0 +1,16 @@
+{
+  "dependencies": [
+    "catch2",
+    "corrade",
+    "eigen",
+    "imgui",
+    "magnum",
+    {
+      "name": "magnum-integration",
+      "features": [
+        "eigen",
+        "imgui"
+      ]
+    }
+  ]
+}

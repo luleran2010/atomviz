@@ -5,6 +5,8 @@ project(AtomViz CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_SOURCE_DIR}/custom-ports")
+
 find_package(Eigen3 CONFIG REQUIRED)
 find_package(Corrade REQUIRED Main)
 find_package(Magnum REQUIRED
