@@ -1,16 +1,8 @@
 {
   "dependencies": [
     "catch2",
-    "corrade",
-    "eigen",
+    "eigen3",
     "imgui",
-    "magnum",
-    {
-      "name": "magnum-integration",
-      "features": [
-        "eigen",
-        "imgui"
-      ]
-    }
+    "sdl2"
   ]
 }
