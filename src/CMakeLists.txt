@@ -17,6 +17,7 @@ target_link_libraries(main PRIVATE
     Magnum::SceneGraph
     Magnum::Shaders
     Eigen3::Eigen
+    MagnumIntegration::Eigen
     Core)
 target_compile_definitions(main PRIVATE
     RESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../tests/data/"
