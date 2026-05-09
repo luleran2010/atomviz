@@ -26,7 +26,8 @@
 #include "ArcBallCamera.h"
 #include "Atoms.h"
 #include "PoscarParser.h"
-#include "AtomsDrawables.h"
+#include "AtomsDrawable.h"
+#include "CellDrawable.h"
 
 using namespace Magnum;
 
@@ -82,20 +83,14 @@ AtomViz::AtomViz(const Arguments& arguments):
 
     // Setup a objects
     {
-        _shader = Shaders::PhongGL{Shaders::PhongGL::Configuration{}
-            .setLightCount(2)};
-
-        Debug{} << "The shader has been setup";
-        
-        auto object = new Object3D{&_scene};
-        // (*object)
-        //     .rotateY(40.0_degf)
-        //     .rotateX(-30.0_degf);
+        auto atomObj = new Object3D{&_scene};
+        auto cellObj = new Object3D{&_scene};
         PoscarParser parser(RESOURCE_DIR + std::string("Zn.vasp"));
         if (auto atoms = parser.parse()) {
             Debug{} << "The structure file has been successfully parsed";
             _atoms = *atoms;
-            new AtomsDrawables{*object, _shader, _drawables, _atoms};
+            new AtomsDrawable{*atomObj, _drawables, _atoms};
+            new CellDrawable{*cellObj, _drawables, _atoms.cell()};
         } else {
             Debug{} << "The structure file could not be parsed";
             // Exit the application
@@ -121,16 +116,6 @@ AtomViz::AtomViz(const Arguments& arguments):
 void AtomViz::drawEvent() {
     GL::defaultFramebuffer.clear(
         GL::FramebufferClear::Color|GL::FramebufferClear::Depth);
-
-    _shader
-        .setProjectionMatrix(_arcballCamera->camera().projectionMatrix())
-        .setLightPositions({
-            {10.0f, 10.0f, 10.0f, 0.0f},
-            {-5.0f, -5.0f, 10.0f, 0.0f}
-        })
-        .setLightColors({Color3{1.0f}, Color3{0.3f}});
-
-    Debug{} << "The shader has been set up in the draw event";
 
     // Call arcball update in every frame. This will do nothing if the camera has not been changed.
     // Otherwise, camera transformation will be propagated into the camera objects.

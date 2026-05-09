@@ -3,9 +3,10 @@ add_library(Core STATIC
     PoscarParser.cpp
 )
 target_link_libraries(Core PRIVATE
-    Eigen3::Eigen)
+    Eigen3::Eigen
+    rapidcsv::rapidcsv)
 
-add_executable(main WIN32 main.cpp ArcBall.cpp AtomsDrawables.cpp)
+add_executable(main WIN32 main.cpp ArcBall.cpp AtomsDrawable.cpp CellDrawable.cpp)
 target_link_libraries(main PRIVATE
     Corrade::Main
     Magnum::Application

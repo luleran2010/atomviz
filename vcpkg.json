@@ -3,6 +3,7 @@
     "catch2",
     "eigen3",
     "imgui",
-    "sdl2"
+    "sdl2",
+    "rapidcsv"
   ]
 }

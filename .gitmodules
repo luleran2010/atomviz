@@ -7,3 +7,6 @@
 [submodule "magnum-integration"]
 	path = magnum-integration
 	url = https://github.com/mosra/magnum-integration.git
+[submodule "Periodic-Table-JSON"]
+	path = Periodic-Table-JSON
+	url = https://github.com/Bowserinator/Periodic-Table-JSON.git

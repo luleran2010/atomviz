@@ -4,6 +4,8 @@
 #include <vector>
 #include <Eigen/Dense>
 
+#include "typedefs.h"
+
 class AtomInterface {
 public:
     virtual ~AtomInterface() {}
@@ -42,8 +44,6 @@ private:
     float _mass;
     float _charge;
 };
-
-typedef Eigen::Matrix3f Cell;
 
 class Atoms {
 public:

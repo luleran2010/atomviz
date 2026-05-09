@@ -1,27 +1,29 @@
-#ifndef ATOMSDRAWABLES_H
-#define ATOMSDRAWABLES_H
+#ifndef AtomViz_CellDrawable_h
+#define AtomViz_CellDrawable_h
 
+#include <Corrade/Containers/Pointer.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/MeshTools/Compile.h>
 #include <Magnum/SceneGraph/Object.h>
 #include <Magnum/SceneGraph/Drawable.h>
+#include <Magnum/Primitives/Cube.h>
+#include <Magnum/Shaders/FlatGL.h>
 #include <Magnum/SceneGraph/MatrixTransformation3D.h>
-#include <Magnum/Shaders/PhongGL.h>
 
-#include "Atoms.h"
+#include "typedefs.h"
 
-class AtomsDrawables: public Magnum::SceneGraph::Drawable3D {
+class CellDrawable: public Magnum::SceneGraph::Drawable3D {
 public:
     using Object3D = Magnum::SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation3D>;
-    explicit AtomsDrawables(Object3D& object, Magnum::Shaders::PhongGL& shader,
-        Magnum::SceneGraph::DrawableGroup3D& drawables, Atoms& atoms);
+    explicit CellDrawable(Object3D& object, Magnum::SceneGraph::DrawableGroup3D& drawables,
+        const Cell& cell);
 
     void draw(const Magnum::Matrix4& transformation, Magnum::SceneGraph::Camera3D& camera);
 private:
-    Magnum::Shaders::PhongGL& _shader;
+    Corrade::Containers::Pointer<Magnum::Shaders::FlatGL3D> _shader;
     Magnum::GL::Mesh _mesh{Magnum::NoCreate};
 
-    Atoms& _atoms;
+    Cell _cell;
 };
 
 #endif

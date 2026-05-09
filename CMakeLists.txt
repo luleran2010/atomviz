@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_LIST_DIR}/custom-ports")
-
 project(AtomViz CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -11,8 +9,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(MSVC)
   add_compile_options(/utf-8)
 endif()
-
-# set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_SOURCE_DIR}/custom-ports")
 
 # Corrade
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/corrade/modules/" ${CMAKE_MODULE_PATH})
@@ -42,6 +38,8 @@ find_package(Magnum REQUIRED
     Sdl2Application)
 
 find_package(MagnumIntegration REQUIRED Eigen ImGui)
+
+find_package(rapidcsv CONFIG REQUIRED)
 
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
