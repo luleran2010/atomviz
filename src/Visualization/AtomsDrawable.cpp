@@ -5,6 +5,7 @@
 #include <Magnum/SceneGraph/Camera.h>
 #include <Magnum/EigenIntegration/Integration.h>
 
+#include "PeriodicTable.h"
 #include "AtomsDrawable.h"
 
 using namespace Magnum;
@@ -22,14 +23,15 @@ AtomsDrawable::AtomsDrawable(Object3D& object,
 void AtomsDrawable::draw(const Matrix4 &transformation, SceneGraph::Camera3D &camera)
 {
     for (size_t i = 0; i < _atoms.size(); i++) {
+        Element element = PeriodicTable::getInstance().getElement(_atoms[i].number());
         Matrix4 atomMatrix = Matrix4::translation(Vector3{_atoms[i].position()})
-            * Matrix4::scaling(Vector3{1.0f});
+            * Matrix4::scaling(Vector3{element.radius * _atomScale});
         (*_shader)
             .setLightPositions({
                 {10.0f, 10.0f, 10.0f, 0.0f},
-                {-5.0f, -5.0f, 10.0f, 0.0f}
+                {-10.0f, -10.0f, -10.0f, 0.0f}
             })
-            .setLightColors({Color3{1.0f}, Color3{0.3f}})
+            .setLightColors({Color3::fromLinearRgbInt(element.color), Color3::fromLinearRgbInt(element.color)})
             .setTransformationMatrix(transformation * atomMatrix)
             .setProjectionMatrix(camera.projectionMatrix())
             .draw(_mesh);

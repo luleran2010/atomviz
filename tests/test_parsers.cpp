@@ -9,7 +9,7 @@
 #include "PoscarParser.h"
 
 TEST_CASE("test_parsers", "[test_parsers]") {
-    std::string filename = RESOURCE_DIR + std::string("Zn.vasp");
+    std::string filename = TEST_RESOURCE_DIR + std::string("Zn.vasp");
     PoscarParser parser(filename);
     Atoms atoms = parser.parse().value();
     REQUIRE(atoms.size() == 4);

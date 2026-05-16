@@ -1,13 +1,13 @@
-#ifndef AtomViz_PoscarParser_h
-#define AtomViz_PoscarParser_h
+#ifndef AtomViz_XYZParser_h
+#define AtomViz_XYZParser_h
 
 #include <string>
 #include <optional>
 #include "Atoms.h"
 
-class PoscarParser {
+class XYZParser {
 public:
-    PoscarParser(const std::string& filename) : _filename(filename) {}
+    XYZParser(const std::string& filename) : _filename(filename) {}
 
     std::optional<Atoms> parse();
 

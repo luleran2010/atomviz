@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "PoscarParser.h"
+#include "PeriodicTable.h"
 
 std::optional<Atoms> PoscarParser::parse()
 {
@@ -15,7 +16,7 @@ std::optional<Atoms> PoscarParser::parse()
     float scale;
     Cell cell;
     std::vector<std::string> elements;
-    std::vector<int> numbers;
+    std::vector<int> counts;
     bool selective_dynamics = false;
     bool cartesian_coordinates = true;
 
@@ -39,14 +40,17 @@ std::optional<Atoms> PoscarParser::parse()
     // Read fifth line as the numbers
     std::getline(input, line);
     ss = std::stringstream(line);
-    int number;
-    while (ss >> number) {
-        numbers.push_back(number);
-    }
+    int count;
     // The number of atoms is the sum of the numbers
     int numAtoms = 0;
-    for (int i = 0; i < numbers.size(); i++) {
-        numAtoms += numbers[i];
+    while (ss >> count) {
+        counts.push_back(count);
+        numAtoms += count;
+    }
+    Eigen::ArrayXi numbers(numAtoms);
+    for (int i = 0, cur = 0; i < counts.size(); i++) {
+        numbers.segment(cur, counts[i]) = PeriodicTable::getInstance().getAtomicNumber(elements[i]);
+        cur += counts[i];
     }
     // Read the type of coordinates
     input >> line;
@@ -60,11 +64,14 @@ std::optional<Atoms> PoscarParser::parse()
     Eigen::MatrixX3f positions(numAtoms, 3);
     for (int i = 0; i < numAtoms; i++) {
         input >> positions(i, 0) >> positions(i, 1) >> positions(i, 2);
+        if (input.peek() != '\n') {
+            input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
     }
 
     input.close();
 
     if (!cartesian_coordinates) positions = positions * cell;
 
-    return std::make_optional<Atoms>(cell, positions, Eigen::ArrayXi::Ones(numAtoms));
+    return std::make_optional<Atoms>(cell, positions, numbers);
 }
