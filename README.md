@@ -1,3 +1,13 @@
+# Introduction
+
+An atomic structure viewer based on Magnum Engine.
+
+(Actively working in progress)
+
+# Screenshot
+
+![alt text](images/screenshot.png)
+
 # How to compile
 
 Use vcpkg to install the dependencies. The Magnum Engine in vcpkg is too old, use `--head` to obtain the latest version from github

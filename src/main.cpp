@@ -32,6 +32,7 @@
 #include "Visualization/BondsDrawable.h"
 #include "Visualization/CellDrawable.h"
 
+#include "UI/MainWindow.h"
 #include "UI/PropertyWindow.h"
 #include "UI/DisplayWindow.h"
 
@@ -67,6 +68,7 @@ private:
 
     ImGuiIntegration::Context _imgui{Magnum::NoCreate};
 
+    MainWindow _mainWindow;
     bool _showPropertyWindow = true;
     PropertyWindow _propertyWindow;
     bool _showDisplayWindow = true;
@@ -169,6 +171,7 @@ void AtomViz::drawEvent() {
     if (ImGui::GetIO().WantTextInput && !isTextInputActive()) startTextInput();
     else if (!ImGui::GetIO().WantTextInput && isTextInputActive()) stopTextInput();
 
+    _mainWindow.draw(nullptr);
     _propertyWindow.draw(&_showPropertyWindow);
     _displayWindow.draw(&_showDisplayWindow);
 

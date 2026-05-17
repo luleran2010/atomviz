@@ -43,6 +43,8 @@ find_package(rapidcsv CONFIG REQUIRED)
 
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
+add_subdirectory(ImGuiFileDialog)
+
 add_compile_definitions(RESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data/")
 
 include_directories(include)

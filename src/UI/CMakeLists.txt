@@ -1,4 +1,5 @@
 add_library(UI STATIC
+    MainWindow.cpp
     PropertyWindow.cpp
     DisplayWindow.cpp)
 target_link_libraries(UI PRIVATE
@@ -12,4 +13,5 @@ target_link_libraries(UI PRIVATE
     Eigen3::Eigen
     MagnumIntegration::Eigen
     MagnumIntegration::ImGui
+    ImGuiFileDialog
     Core)
